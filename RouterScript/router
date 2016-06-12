@@ -1,0 +1,19 @@
+#!/bin/ash /etc/rc.common
+
+START=99
+
+start() {
+	echo "Start Router python" 
+	python /root/printer/runserver.py &  
+        python /root/printer/relay.py & 
+        python /root/printer/NetStatus.py & 
+        python /root/printer/UpdateSensor.py & 
+}
+
+stop() {
+	kill -9 `ps | grep "python /root/printer/runserver.py" | awk '{if(NR==1)print$1}'`
+        kill -9 `ps | grep "python /root/printer/relay.py" | awk '{if(NR==1)print$1}'`
+        kill -9 `ps | grep "python /root/printer/NetStatus.py" | awk '{if(NR==1)print$1}'`
+        kill -9 `ps | grep "python /root/printer/UpdateSensor.py" | awk '{if(NR==1)print$1}'`
+
+}

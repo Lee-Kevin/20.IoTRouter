@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="jumbotron">
+    <h1>Router Printer</h1>
+    <p class="lead">Router Printer allow you to write something in the web page and print it out via the Thermal Printer connected to the Linkit Smart 7688</p>
+    <!--<p><a href="http://flask.pocoo.org/" class="btn btn-primary btn-large">Learn more &raquo;</a></p>-->
+</div>
+<center>
+    <form method="POST" action="{{ url_for('add_comment') }}">
+            <!--{{ form.csrf_token }}-->
+        <p>
+            {{ form.comment.label }}<br>
+            {{ form.comment(rows=5, cols=27) }}
+        </p>
+        <p>
+            <input type="submit" value="Print Message" class="btn btn-primary btn-large">
+        </p>
+    </form>
+</center>
+
+    {% endblock %}
