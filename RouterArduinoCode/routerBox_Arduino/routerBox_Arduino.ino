@@ -25,7 +25,7 @@
 #include "SoftwareSerial.h"
 
 #define PIXIEL_PIN 6
-#define PIXIEL_NUM 14
+#define PIXIEL_NUM 6
 #define USER_MAXNUM   6
 
 #define INTERVAL      1          // Time interval unit s
@@ -74,8 +74,9 @@ char *g_Buffer;
 char buff[30];
 int g_BufferIndex;
 
-volatile uint8_t current_color;
-volatile uint8_t last_color;
+volatile uint8_t current_color = 0;
+volatile uint8_t last_color = 0;
+
 HDC1000 mySensor;
   
 void bridgeCatFile(int routerInfo) {
@@ -147,34 +148,27 @@ void pixels_Action(uint16_t speed, uint16_t users) {
   uint8_t colorRange = 255;
   uint8_t color;
   uint32_t _color;  
-  
+  if (speed < 10) {
+      speed = 10;
+  }
   current_color = map(speed > maxSpeed ? maxSpeed : speed, 0, maxSpeed, 0, colorRange);
-  
-  for(color=last_color;
-    current_color > last_color ? (color < current_color):(color > current_color);
-    current_color > last_color ? (color++):(color--))
-  { 
+  color=last_color;
+  do {
+    current_color > last_color ? (color++):(color--);
     _color = pixels.Color(color, 0, 255 - color);  
-    
-    for(int i=USER_MAXNUM; i < pixels.numPixels(); i++)
-    {      
-        pixels.setPixelColor(i, _color);
-    }              
-    pixels.show();
-    delay(10);
-    
-  }  
-  
-  for(int i=0; i < USER_MAXNUM; i++){    
-    if(i < users){
-      pixels.setPixelColor(i, 0x00FF00);    
-    }else {
-      pixels.setPixelColor(i, 0);
-    }     
-  }  
+    for (int i=0; i<USER_MAXNUM; i++) {
+        if (i < users) {
+            pixels.setPixelColor(i, _color);
+        } else {
+            pixels.setPixelColor(i, 0);
+        }
+    }
   pixels.show();
+  delay(10);      
+  } while((current_color > last_color ? (color < current_color):(color > current_color)));
   
   last_color = current_color;
+  
 }
 
 void setup() {
